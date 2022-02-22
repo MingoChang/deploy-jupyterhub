@@ -48,6 +48,10 @@ spec:
       - name: config
         hostPath:
           path: /root/web/base-deployment/nacos/config/custom.properties
+      initContainers:
+      - name: init-nacos
+        image: busybox
+        command: ['sh', '-c', 'until nslookup mysql; do echo waiting for nacos; sleep 2; done;']
 
 ---
 apiVersion: v1
