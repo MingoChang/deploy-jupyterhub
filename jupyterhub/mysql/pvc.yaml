@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jhub-mysql
+  namespace: jhub
+spec:
+  storageClassName: jupyterhub-storage ## 注释掉指指定的储存类
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

@@ -1,0 +1,25 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  ceph-secret: QVFBZHdhNWhrbWZyQ0JBQXFPZTlPeDYzQW1EYTlsdGdGTWE4OFE9PQ==
+  ceph-username: Y2xpZW50LmFkbWlu
+  fsid: MWJlMDM0MTQtY2E1Zi00NDdmLWJmMWEtYTE3NWVjYzk3MDYx
+  mon-secret: QVFBZHdhNWgrNTFlQnhBQTBucnZxYmZmQkFoanVxc2trbFY5UlE9PQ==
+kind: Secret
+metadata:
+  creationTimestamp: "2021-12-07T02:04:13Z"
+  name: rook-ceph-mon
+  namespace: rook-ceph
+  ownerReferences:
+  - apiVersion: ceph.rook.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: CephCluster
+    name: rook-ceph
+    uid: 26ccda34-5fc1-460e-af21-947df33f9281
+  resourceVersion: "1889"
+  uid: 556a47f7-4285-4b3b-b299-cba7c46cf84a
+type: kubernetes.io/rook

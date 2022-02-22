@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+    pv.kubernetes.io/provisioned-by: kubernetes.io/azure-disk
+    volumehelper.VolumeDynamicallyCreatedByKey: azure-disk-dynamic-provisioner
+  creationTimestamp: "2021-11-29T09:07:15Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+  labels:
+    failure-domain.beta.kubernetes.io/region: chinaeast2
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:pv.kubernetes.io/bound-by-controller: {}
+          f:pv.kubernetes.io/provisioned-by: {}
+          f:volumehelper.VolumeDynamicallyCreatedByKey: {}
+        f:labels:
+          .: {}
+          f:failure-domain.beta.kubernetes.io/region: {}
+      f:spec:
+        f:accessModes: {}
+        f:azureDisk:
+          .: {}
+          f:cachingMode: {}
+          f:diskName: {}
+          f:diskURI: {}
+          f:fsType: {}
+          f:kind: {}
+          f:readOnly: {}
+        f:capacity:
+          .: {}
+          f:storage: {}
+        f:claimRef:
+          .: {}
+          f:apiVersion: {}
+          f:kind: {}
+          f:name: {}
+          f:namespace: {}
+          f:resourceVersion: {}
+          f:uid: {}
+        f:nodeAffinity:
+          .: {}
+          f:required:
+            .: {}
+            f:nodeSelectorTerms: {}
+        f:persistentVolumeReclaimPolicy: {}
+        f:storageClassName: {}
+        f:volumeMode: {}
+      f:status:
+        f:phase: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2021-11-29T09:07:15Z"
+  name: pvc-4eb50679-cb3a-451f-bf02-45611e252598
+  resourceVersion: "2637"
+  uid: a85a8835-384f-448f-9a36-a7ab8ab6f772
+spec:
+  accessModes:
+  - ReadWriteOnce
+  azureDisk:
+    cachingMode: ReadOnly
+    diskName: kubernetes-dynamic-pvc-4eb50679-cb3a-451f-bf02-45611e252598
+    diskURI: /subscriptions/3385ff42-6e10-497f-aced-4fd83f9e959e/resourceGroups/mc_networkwatcherrg_rook_chinaeast2/providers/Microsoft.Compute/disks/kubernetes-dynamic-pvc-4eb50679-cb3a-451f-bf02-45611e252598
+    fsType: ""
+    kind: Managed
+    readOnly: false
+  capacity:
+    storage: 128Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: set1-data-0582px
+    namespace: rook-ceph
+    resourceVersion: "2622"
+    uid: 4eb50679-cb3a-451f-bf02-45611e252598
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: failure-domain.beta.kubernetes.io/region
+          operator: In
+          values:
+          - chinaeast2
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: default
+  volumeMode: Block
+status:
+  phase: Bound

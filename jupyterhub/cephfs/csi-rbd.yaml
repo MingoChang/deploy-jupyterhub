@@ -1,0 +1,562 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    banzaicloud.com/last-applied: '{"apiVersion":"apps/v1","kind":"Deployment","metadata":{"name":"csi-rbdplugin-provisioner","namespace":"rook-ceph","ownerReferences":[{"apiVersion":"apps/v1","controller":true,"kind":"Deployment","name":"rook-ceph-operator","uid":"f8755869-2c41-47c1-97f6-73520f04d49d"}]},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"csi-rbdplugin-provisioner"}},"strategy":{"type":"Recreate"},"template":{"metadata":{"labels":{"app":"csi-rbdplugin-provisioner","contains":"csi-rbdplugin-metrics"}},"spec":{"affinity":{"nodeAffinity":{},"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"app","operator":"In","values":["csi-rbdplugin-provisioner"]}]},"topologyKey":"kubernetes.io/hostname"}]}},"containers":[{"args":["--csi-address=$(ADDRESS)","--v=0","--timeout=150s","--retry-interval-start=500ms","--leader-election=true","--leader-election-namespace=rook-ceph","--default-fstype=ext4","--extra-create-metadata=true"],"env":[{"name":"ADDRESS","value":"unix:///csi/csi-provisioner.sock"}],"image":"k8sgcr.azk8s.cn/sig-storage/csi-provisioner:v3.0.0","imagePullPolicy":"IfNotPresent","name":"csi-provisioner","resources":{},"volumeMounts":[{"mountPath":"/csi","name":"socket-dir"}]},{"args":["--csi-address=$(ADDRESS)","--v=0","--timeout=150s","--leader-election","--leader-election-namespace=rook-ceph","--handle-volume-inuse-error=false"],"env":[{"name":"ADDRESS","value":"unix:///csi/csi-provisioner.sock"}],"image":"k8sgcr.azk8s.cn/sig-storage/csi-resizer:v1.3.0","imagePullPolicy":"IfNotPresent","name":"csi-resizer","resources":{},"volumeMounts":[{"mountPath":"/csi","name":"socket-dir"}]},{"args":["--v=0","--timeout=150s","--csi-address=$(ADDRESS)","--leader-election=true","--leader-election-namespace=rook-ceph"],"env":[{"name":"ADDRESS","value":"/csi/csi-provisioner.sock"}],"image":"k8sgcr.azk8s.cn/sig-storage/csi-attacher:v3.3.0","imagePullPolicy":"IfNotPresent","name":"csi-attacher","resources":{},"volumeMounts":[{"mountPath":"/csi","name":"socket-dir"}]},{"args":["--csi-address=$(ADDRESS)","--v=0","--timeout=150s","--leader-election=true","--leader-election-namespace=rook-ceph"],"env":[{"name":"ADDRESS","value":"unix:///csi/csi-provisioner.sock"}],"image":"k8sgcr.azk8s.cn/sig-storage/csi-snapshotter:v4.2.0","imagePullPolicy":"IfNotPresent","name":"csi-snapshotter","resources":{},"volumeMounts":[{"mountPath":"/csi","name":"socket-dir"}]},{"args":["--nodeid=$(NODE_ID)","--endpoint=$(CSI_ENDPOINT)","--v=0","--type=rbd","--controllerserver=true","--drivername=rook-ceph.rbd.csi.ceph.com","--pidlimit=-1","--metricsport=9090","--metricspath=/metrics","--enablegrpcmetrics=false"],"env":[{"name":"POD_IP","valueFrom":{"fieldRef":{"fieldPath":"status.podIP"}}},{"name":"NODE_ID","valueFrom":{"fieldRef":{"fieldPath":"spec.nodeName"}}},{"name":"POD_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}},{"name":"CSI_ENDPOINT","value":"unix:///csi/csi-provisioner.sock"}],"image":"quay.io/cephcsi/cephcsi:v3.4.0","imagePullPolicy":"IfNotPresent","name":"csi-rbdplugin","resources":{},"volumeMounts":[{"mountPath":"/csi","name":"socket-dir"},{"mountPath":"/dev","name":"host-dev"},{"mountPath":"/sys","name":"host-sys"},{"mountPath":"/lib/modules","name":"lib-modules","readOnly":true},{"mountPath":"/etc/ceph-csi-config/","name":"ceph-csi-configs"},{"mountPath":"/tmp/csi/keys","name":"keys-tmp-dir"}]},{"args":["--type=liveness","--endpoint=$(CSI_ENDPOINT)","--metricsport=9080","--metricspath=/metrics","--polltime=60s","--timeout=3s"],"env":[{"name":"CSI_ENDPOINT","value":"unix:///csi/csi-provisioner.sock"},{"name":"POD_IP","valueFrom":{"fieldRef":{"fieldPath":"status.podIP"}}}],"image":"quay.io/cephcsi/cephcsi:v3.4.0","imagePullPolicy":"IfNotPresent","name":"liveness-prometheus","resources":{},"volumeMounts":[{"mountPath":"/csi","name":"socket-dir"}]}],"serviceAccountName":"rook-csi-rbd-provisioner-sa","volumes":[{"hostPath":{"path":"/dev"},"name":"host-dev"},{"hostPath":{"path":"/sys"},"name":"host-sys"},{"hostPath":{"path":"/lib/modules"},"name":"lib-modules"},{"emptyDir":{"medium":"Memory"},"name":"socket-dir"},{"name":"ceph-csi-configs","projected":{"sources":[{"configMap":{"items":[{"key":"csi-cluster-config-json","path":"config.json"}],"name":"rook-ceph-csi-config"}},{"configMap":{"items":[{"key":"csi-mapping-config-json","path":"cluster-mapping.json"}],"name":"rook-ceph-csi-mapping-config"}}]}},{"emptyDir":{"medium":"Memory"},"name":"keys-tmp-dir"}]}}},"status":{}}'
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2021-12-06T03:18:38Z"
+  generation: 1
+  managedFields:
+  - apiVersion: apps/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:banzaicloud.com/last-applied: {}
+        f:ownerReferences:
+          .: {}
+          k:{"uid":"f8755869-2c41-47c1-97f6-73520f04d49d"}:
+            .: {}
+            f:apiVersion: {}
+            f:blockOwnerDeletion: {}
+            f:controller: {}
+            f:kind: {}
+            f:name: {}
+            f:uid: {}
+      f:spec:
+        f:progressDeadlineSeconds: {}
+        f:replicas: {}
+        f:revisionHistoryLimit: {}
+        f:selector: {}
+        f:strategy:
+          f:type: {}
+        f:template:
+          f:metadata:
+            f:labels:
+              .: {}
+              f:app: {}
+              f:contains: {}
+          f:spec:
+            f:affinity:
+              .: {}
+              f:nodeAffinity: {}
+              f:podAntiAffinity:
+                .: {}
+                f:requiredDuringSchedulingIgnoredDuringExecution: {}
+            f:containers:
+              k:{"name":"csi-attacher"}:
+                .: {}
+                f:args: {}
+                f:env:
+                  .: {}
+                  k:{"name":"ADDRESS"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/csi"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+              k:{"name":"csi-provisioner"}:
+                .: {}
+                f:args: {}
+                f:env:
+                  .: {}
+                  k:{"name":"ADDRESS"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/csi"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+              k:{"name":"csi-rbdplugin"}:
+                .: {}
+                f:args: {}
+                f:env:
+                  .: {}
+                  k:{"name":"CSI_ENDPOINT"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                  k:{"name":"NODE_ID"}:
+                    .: {}
+                    f:name: {}
+                    f:valueFrom:
+                      .: {}
+                      f:fieldRef:
+                        .: {}
+                        f:apiVersion: {}
+                        f:fieldPath: {}
+                  k:{"name":"POD_IP"}:
+                    .: {}
+                    f:name: {}
+                    f:valueFrom:
+                      .: {}
+                      f:fieldRef:
+                        .: {}
+                        f:apiVersion: {}
+                        f:fieldPath: {}
+                  k:{"name":"POD_NAMESPACE"}:
+                    .: {}
+                    f:name: {}
+                    f:valueFrom:
+                      .: {}
+                      f:fieldRef:
+                        .: {}
+                        f:apiVersion: {}
+                        f:fieldPath: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/csi"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+                  k:{"mountPath":"/dev"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+                  k:{"mountPath":"/etc/ceph-csi-config/"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+                  k:{"mountPath":"/lib/modules"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+                    f:readOnly: {}
+                  k:{"mountPath":"/sys"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+                  k:{"mountPath":"/tmp/csi/keys"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+              k:{"name":"csi-resizer"}:
+                .: {}
+                f:args: {}
+                f:env:
+                  .: {}
+                  k:{"name":"ADDRESS"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/csi"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+              k:{"name":"csi-snapshotter"}:
+                .: {}
+                f:args: {}
+                f:env:
+                  .: {}
+                  k:{"name":"ADDRESS"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/csi"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+              k:{"name":"liveness-prometheus"}:
+                .: {}
+                f:args: {}
+                f:env:
+                  .: {}
+                  k:{"name":"CSI_ENDPOINT"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                  k:{"name":"POD_IP"}:
+                    .: {}
+                    f:name: {}
+                    f:valueFrom:
+                      .: {}
+                      f:fieldRef:
+                        .: {}
+                        f:apiVersion: {}
+                        f:fieldPath: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/csi"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+            f:dnsPolicy: {}
+            f:restartPolicy: {}
+            f:schedulerName: {}
+            f:securityContext: {}
+            f:serviceAccount: {}
+            f:serviceAccountName: {}
+            f:terminationGracePeriodSeconds: {}
+            f:volumes:
+              .: {}
+              k:{"name":"ceph-csi-configs"}:
+                .: {}
+                f:name: {}
+                f:projected:
+                  .: {}
+                  f:defaultMode: {}
+                  f:sources: {}
+              k:{"name":"host-dev"}:
+                .: {}
+                f:hostPath:
+                  .: {}
+                  f:path: {}
+                  f:type: {}
+                f:name: {}
+              k:{"name":"host-sys"}:
+                .: {}
+                f:hostPath:
+                  .: {}
+                  f:path: {}
+                  f:type: {}
+                f:name: {}
+              k:{"name":"keys-tmp-dir"}:
+                .: {}
+                f:emptyDir:
+                  .: {}
+                  f:medium: {}
+                f:name: {}
+              k:{"name":"lib-modules"}:
+                .: {}
+                f:hostPath:
+                  .: {}
+                  f:path: {}
+                  f:type: {}
+                f:name: {}
+              k:{"name":"socket-dir"}:
+                .: {}
+                f:emptyDir:
+                  .: {}
+                  f:medium: {}
+                f:name: {}
+    manager: rook
+    operation: Update
+    time: "2021-12-06T03:18:38Z"
+  - apiVersion: apps/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:deployment.kubernetes.io/revision: {}
+      f:status:
+        f:availableReplicas: {}
+        f:conditions:
+          .: {}
+          k:{"type":"Available"}:
+            .: {}
+            f:lastTransitionTime: {}
+            f:lastUpdateTime: {}
+            f:message: {}
+            f:reason: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Progressing"}:
+            .: {}
+            f:lastTransitionTime: {}
+            f:lastUpdateTime: {}
+            f:message: {}
+            f:reason: {}
+            f:status: {}
+            f:type: {}
+        f:observedGeneration: {}
+        f:readyReplicas: {}
+        f:replicas: {}
+        f:updatedReplicas: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2021-12-06T03:20:46Z"
+  name: csi-rbdplugin-provisioner
+  namespace: rook-ceph
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: false
+    controller: true
+    kind: Deployment
+    name: rook-ceph-operator
+    uid: f8755869-2c41-47c1-97f6-73520f04d49d
+  resourceVersion: "2111"
+  uid: 3fdad20d-ac35-4fab-8b3d-39b607453751
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: csi-rbdplugin-provisioner
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: csi-rbdplugin-provisioner
+        contains: csi-rbdplugin-metrics
+    spec:
+      affinity:
+        nodeAffinity: {}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - csi-rbdplugin-provisioner
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - args:
+        - --csi-address=$(ADDRESS)
+        - --v=0
+        - --timeout=150s
+        - --retry-interval-start=500ms
+        - --leader-election=true
+        - --leader-election-namespace=rook-ceph
+        - --default-fstype=ext4
+        - --extra-create-metadata=true
+        env:
+        - name: ADDRESS
+          value: unix:///csi/csi-provisioner.sock
+        image: k8sgcr.azk8s.cn/sig-storage/csi-provisioner:v3.0.0
+        imagePullPolicy: IfNotPresent
+        name: csi-provisioner
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --csi-address=$(ADDRESS)
+        - --v=0
+        - --timeout=150s
+        - --leader-election
+        - --leader-election-namespace=rook-ceph
+        - --handle-volume-inuse-error=false
+        env:
+        - name: ADDRESS
+          value: unix:///csi/csi-provisioner.sock
+        image: k8sgcr.azk8s.cn/sig-storage/csi-resizer:v1.3.0
+        imagePullPolicy: IfNotPresent
+        name: csi-resizer
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --v=0
+        - --timeout=150s
+        - --csi-address=$(ADDRESS)
+        - --leader-election=true
+        - --leader-election-namespace=rook-ceph
+        env:
+        - name: ADDRESS
+          value: /csi/csi-provisioner.sock
+        image: k8sgcr.azk8s.cn/sig-storage/csi-attacher:v3.3.0
+        imagePullPolicy: IfNotPresent
+        name: csi-attacher
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --csi-address=$(ADDRESS)
+        - --v=0
+        - --timeout=150s
+        - --leader-election=true
+        - --leader-election-namespace=rook-ceph
+        env:
+        - name: ADDRESS
+          value: unix:///csi/csi-provisioner.sock
+        image: k8sgcr.azk8s.cn/sig-storage/csi-snapshotter:v4.2.0
+        imagePullPolicy: IfNotPresent
+        name: csi-snapshotter
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - args:
+        - --nodeid=$(NODE_ID)
+        - --endpoint=$(CSI_ENDPOINT)
+        - --v=0
+        - --type=rbd
+        - --controllerserver=true
+        - --drivername=rook-ceph.rbd.csi.ceph.com
+        - --pidlimit=-1
+        - --metricsport=9090
+        - --metricspath=/metrics
+        - --enablegrpcmetrics=false
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: NODE_ID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: CSI_ENDPOINT
+          value: unix:///csi/csi-provisioner.sock
+        image: quay.io/cephcsi/cephcsi:v3.4.0
+        imagePullPolicy: IfNotPresent
+        name: csi-rbdplugin
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+        - mountPath: /dev
+          name: host-dev
+        - mountPath: /sys
+          name: host-sys
+        - mountPath: /lib/modules
+          name: lib-modules
+          readOnly: true
+        - mountPath: /etc/ceph-csi-config/
+          name: ceph-csi-configs
+        - mountPath: /tmp/csi/keys
+          name: keys-tmp-dir
+      - args:
+        - --type=liveness
+        - --endpoint=$(CSI_ENDPOINT)
+        - --metricsport=9080
+        - --metricspath=/metrics
+        - --polltime=60s
+        - --timeout=3s
+        env:
+        - name: CSI_ENDPOINT
+          value: unix:///csi/csi-provisioner.sock
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        image: quay.io/cephcsi/cephcsi:v3.4.0
+        imagePullPolicy: IfNotPresent
+        name: liveness-prometheus
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: rook-csi-rbd-provisioner-sa
+      serviceAccountName: rook-csi-rbd-provisioner-sa
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - hostPath:
+          path: /dev
+          type: ""
+        name: host-dev
+      - hostPath:
+          path: /sys
+          type: ""
+        name: host-sys
+      - hostPath:
+          path: /lib/modules
+          type: ""
+        name: lib-modules
+      - emptyDir:
+          medium: Memory
+        name: socket-dir
+      - name: ceph-csi-configs
+        projected:
+          defaultMode: 420
+          sources:
+          - configMap:
+              items:
+              - key: csi-cluster-config-json
+                path: config.json
+              name: rook-ceph-csi-config
+          - configMap:
+              items:
+              - key: csi-mapping-config-json
+                path: cluster-mapping.json
+              name: rook-ceph-csi-mapping-config
+      - emptyDir:
+          medium: Memory
+        name: keys-tmp-dir
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: "2021-12-06T03:20:46Z"
+    lastUpdateTime: "2021-12-06T03:20:46Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2021-12-06T03:18:38Z"
+    lastUpdateTime: "2021-12-06T03:20:46Z"
+    message: ReplicaSet "csi-rbdplugin-provisioner-56bf5b544d" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 2
+  replicas: 2
+  updatedReplicas: 2

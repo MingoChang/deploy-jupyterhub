@@ -1,0 +1,8 @@
+setup.py
+jupyterhub_jwtauthenticator.egg-info/PKG-INFO
+jupyterhub_jwtauthenticator.egg-info/SOURCES.txt
+jupyterhub_jwtauthenticator.egg-info/dependency_links.txt
+jupyterhub_jwtauthenticator.egg-info/requires.txt
+jupyterhub_jwtauthenticator.egg-info/top_level.txt
+jwtauthenticator/__init__.py
+jwtauthenticator/jwtauthenticator.py

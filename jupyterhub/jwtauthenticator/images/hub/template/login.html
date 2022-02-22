@@ -1,0 +1,108 @@
+{% extends "page.html" %}
+{% block nav_bar %}
+{% endblock %}
+{% if announcement_login %}
+  {% set announcement = announcement_login %}
+{% endif %}
+
+{% block login_widget %}
+{% endblock %}
+
+
+{% block main %}
+<style>
+  body{
+    background: url({{base_url}}static/images/bg-min.png) no-repeat;background-size: 100% auto;background-position: bottom;
+    height: 100vh;border-top: 1px solid transparent;
+  }
+  .container{
+     margin-left:auto;
+     margin-right:auto
+  }
+  #login-main form{
+  vertical-align:baseline
+  }
+  #login-main{
+  padding-top:80px;
+  margin-right:200px
+  }
+</style>
+{% block login %}
+  <div style="text-align:center;margin-top:70px"><img src="{{base_url}}static/images/title.png"/></div>
+<div id="login-main" class="container" style="height: auto;margin-right: auto;">
+
+{% if custom_html %}
+{{ custom_html | safe }}
+{% elif login_service %}
+<div class="service-login">
+  <a role="button" class='btn btn-jupyter btn-lg' href='{{authenticator_login_url}}'>
+    登录 {{login_service}}
+  </a>
+</div>
+{% else %}
+<form action="{{login_url}}?next={{next}}" method="post" role="form">
+  <div class="auth-form-header" style="background-color: #0086ea;">
+    登录
+  </div>
+  <div class='auth-form-body' style="background-color: rgba(255,255,255,0.95);">
+
+    <p id='insecure-login-warning' class='hidden'>
+    Warning: JupyterHub seems to be served over an unsecured HTTP connection.
+    We strongly recommend enabling HTTPS for JupyterHub.
+    </p>
+
+    {% if login_error %}
+    <p class="login_error">
+      {{login_error}}
+    </p>
+    {% endif %}
+    <label for="username_input">用户名:</label>
+    <input style="height: 40px;margin-bottom: 20px;" 
+      id="username_input"
+      type="text"
+      autocapitalize="off"
+      autocorrect="off"
+      class="form-control"
+      name="username"
+      val="{{username}}"
+      tabindex="1"
+      autofocus="autofocus"
+    />
+    <label for='password_input'>密码:</label>
+    <input style="height: 40px;" 
+      type="password"
+      class="form-control"
+      name="password"
+      id="password_input"
+      tabindex="2"
+    />
+
+    <input style="width: 100%;height: 40px;margin-top: 30px;line-height: 26px;border-color: transparent;" 
+      type="submit"
+      id="login_submit"
+      class='btn btn-jupyter'
+      value='立即登录'
+      tabindex="3"
+      style="width:100%"
+    />
+    <div style="text-align: right;padding-right: 10px;margin-top: 15px;margin-bottom: -10px;">
+      <a target="_blank" href="/hub/static/images/人工智能工程技术人员竞赛平台 - 使用说明书.pdf" style="margin-top: 5px;font-size: 14px;text-decoration: underline;">操作说明</a>
+    </div>
+  </div>
+</form>
+{% endif %}
+</div>
+<div style="position: fixed;bottom: 25px;left: 0;right: 0;text-align: center;"><img src="{{base_url}}static/images/company.png"/></div>
+{% endblock login %}
+
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script>
+if (window.location.protocol === "http:") {
+
+}
+</script>
+
+{% endblock %}

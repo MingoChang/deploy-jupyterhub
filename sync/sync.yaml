@@ -1,0 +1,29 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: sync
+  namespace: hub
+spec:
+  schedule: "30 00 * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 1
+  startingDeadlineSeconds: 600 # 10 min
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 7200 # 55min
+      template:
+        spec:
+          containers:
+          - name: sync
+            image: nlaicpu.azurecr.cn/newland/sync:1.0.0
+            command: ["python3"]
+            args: ["/root/work/sync-gitlab.py"]
+            volumeMounts:
+            - mountPath: /root/work
+              name: work
+          volumes:
+          - name: work 
+            hostPath:
+              path: /root/sync/work
+          restartPolicy: Never

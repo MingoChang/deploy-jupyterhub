@@ -1,0 +1,102 @@
+# scheduling relates to the user-scheduler pods and user-placeholder pods.
+scheduling:
+  userScheduler:
+    image:
+      # IMPORTANT: Bumping the minor version of this binary should go hand in
+      #            hand with an inspection of the user-scheduelrs RBAC resources
+      #            that we have forked.
+      name: suggest123/kube-scheduler
+      tag: v1.19.13 # ref: https://github.com/kubernetes/website/blob/main/content/en/releases/patch-releases.md
+  userPlaceholder:
+    image:
+      name: suggest123/pause
+      # tag's can be updated by inspecting the output of the command:
+      # gcloud container images list-tags k8s.gcr.io/pause --sort-by=~tags
+      #
+      # If you update this, also update prePuller.pause.image.tag
+      tag: "3.5"
+  
+
+
+
+prePuller:
+  pause:
+    image:
+      name: suggest123/pause
+      # tag's can be updated by inspecting the output of the command:
+      # gcloud container images list-tags k8s.gcr.io/pause --sort-by=~tags
+      #
+      # If you update this, also update scheduling.userPlaceholder.image.tag
+      tag: "3.5"
+      
+      
+proxy:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30002
+      
+      
+hub:
+  extraFiles:
+
+    # Files in /usr/local/etc/jupyterhub/jupyterhub_config.d are
+    # automatically loaded in alphabetical order of the final file
+    # name when JupyterHub starts.
+    my_config:
+      mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/my_jupyterhub_config.py
+    login:
+      mountPath: /usr/local/share/jupyterhub/templates/login.html
+      
+  image:
+    name: suggest123/k8s-hub
+    tag: "0.0.7"
+  config:
+    JupyterHub:
+      authenticator_class: jwtauthenticator.jwtauthenticator.BlendAuthenticator
+  db:
+    pvc:
+      storageClassName: jupyterhub-storage
+      
+      
+singleuser:
+  defaultUrl: "/lab"
+  extraEnv:
+    LANGUAGE: zh_CN
+  image:
+    name: nlaicpu.azurecr.cn/newland/ai-base
+    tag: "3.2.3"
+  profileList:
+    - display_name: "basic image"
+      description: "基础镜像"
+      kubespawner_override:
+        env:
+          MEM_LIMIT: "4294967296"
+          CPU_LIMIT: "2"
+      default: true
+    - display_name: "original image"
+      description: "原生镜像"
+      kubespawner_override:
+        env:
+          MEM_LIMIT: "4294967296"
+          CPU_LIMIT: "2"
+        image_spec: "jupyterhub/k8s-singleuser-sample:1.1.3"
+    
+  cpu:
+    limit: 1
+    guarantee: 0.5
+  memory:
+    limit: "4096M"
+    guarantee: "2048M"
+  storage:
+    capacity: 10Gi
+    type: dynamic
+    dynamic:
+      storageClass: newland-nfs-hdd
+    extraVolumes:
+      - name: phfs
+        persistentVolumeClaim:
+          claimName: newland-share-store-hdd
+    extraVolumeMounts:
+      - mountPath: /home/jovyan/phfs
+        name: phfs

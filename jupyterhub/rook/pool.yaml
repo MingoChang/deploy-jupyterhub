@@ -1,0 +1,9 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool-external04
+  namespace: rook-ceph-external
+spec:
+  failureDomain: host
+  replicated:
+    size: 1

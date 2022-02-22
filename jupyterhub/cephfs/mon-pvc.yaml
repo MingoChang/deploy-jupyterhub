@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/azure-disk
+    volume.kubernetes.io/selected-node: aks-agentpool-26850926-vmss000001
+  creationTimestamp: "2021-11-29T09:03:58Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: rook-ceph-mon
+    ceph-version: 16.2.6-0
+    ceph_daemon_id: a
+    ceph_daemon_type: mon
+    mon: a
+    mon_canary: "true"
+    mon_cluster: rook-ceph
+    pvc_name: rook-ceph-mon-a
+    pvc_size: 32Gi
+    rook-version: v1.7.7
+    rook_cluster: rook-ceph
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:volume.kubernetes.io/selected-node: {}
+    manager: kube-scheduler
+    operation: Update
+    time: "2021-11-29T09:03:58Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:labels:
+          .: {}
+          f:app: {}
+          f:ceph-version: {}
+          f:ceph_daemon_id: {}
+          f:ceph_daemon_type: {}
+          f:mon: {}
+          f:mon_canary: {}
+          f:mon_cluster: {}
+          f:pvc_name: {}
+          f:pvc_size: {}
+          f:rook-version: {}
+          f:rook_cluster: {}
+        f:ownerReferences:
+          .: {}
+          k:{"uid":"b72125b7-11ff-49b3-8d33-9c97c83b79fb"}:
+            .: {}
+            f:apiVersion: {}
+            f:blockOwnerDeletion: {}
+            f:controller: {}
+            f:kind: {}
+            f:name: {}
+            f:uid: {}
+      f:spec:
+        f:accessModes: {}
+        f:resources:
+          f:requests:
+            .: {}
+            f:storage: {}
+        f:storageClassName: {}
+        f:volumeMode: {}
+    manager: rook
+    operation: Update
+    time: "2021-11-29T09:03:58Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:pv.kubernetes.io/bind-completed: {}
+          f:pv.kubernetes.io/bound-by-controller: {}
+          f:volume.beta.kubernetes.io/storage-provisioner: {}
+      f:spec:
+        f:volumeName: {}
+      f:status:
+        f:accessModes: {}
+        f:capacity:
+          .: {}
+          f:storage: {}
+        f:phase: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2021-11-29T09:04:01Z"
+  name: rook-ceph-mon-a
+  namespace: rook-ceph
+  ownerReferences:
+  - apiVersion: ceph.rook.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: CephCluster
+    name: rook-ceph
+    uid: b72125b7-11ff-49b3-8d33-9c97c83b79fb
+  resourceVersion: "1586"
+  uid: 26d5aa48-6750-4419-a997-0b31530de222
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 32Gi
+  storageClassName: managed-hdd
+  volumeMode: Filesystem
+  volumeName: pvc-26d5aa48-6750-4419-a997-0b31530de222
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 32Gi
+  phase: Bound

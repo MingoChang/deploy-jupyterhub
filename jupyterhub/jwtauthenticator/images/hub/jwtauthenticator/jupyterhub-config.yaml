@@ -1,0 +1,54 @@
+# scheduling relates to the user-scheduler pods and user-placeholder pods.
+scheduling:
+  userScheduler:
+    image:
+      # IMPORTANT: Bumping the minor version of this binary should go hand in
+      #            hand with an inspection of the user-scheduelrs RBAC resources
+      #            that we have forked.
+      name: suggest123/kube-scheduler
+      tag: v1.19.13 # ref: https://github.com/kubernetes/website/blob/main/content/en/releases/patch-releases.md
+  userPlaceholder:
+    image:
+      name: suggest123/pause
+      # tag's can be updated by inspecting the output of the command:
+      # gcloud container images list-tags k8s.gcr.io/pause --sort-by=~tags
+      #
+      # If you update this, also update prePuller.pause.image.tag
+      tag: "3.5"
+  
+
+
+
+prePuller:
+  pause:
+    image:
+      name: suggest123/pause
+      # tag's can be updated by inspecting the output of the command:
+      # gcloud container images list-tags k8s.gcr.io/pause --sort-by=~tags
+      #
+      # If you update this, also update scheduling.userPlaceholder.image.tag
+      tag: "3.5"
+      
+      
+proxy:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30000
+      
+      
+hub:
+  extraFiles:
+
+    # Files in /usr/local/etc/jupyterhub/jupyterhub_config.d are
+    # automatically loaded in alphabetical order of the final file
+    # name when JupyterHub starts.
+    my_config:
+      mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/my_jupyterhub_config.py
+      
+  image:
+    name: suggest123/k8s-hub
+    tag: "0.0.1"
+  config:
+    JupyterHub:
+      authenticator_class: jwtauthenticator.jwtauthenticator.BlendAuthenticator

@@ -1,0 +1,94 @@
+# scheduling relates to the user-scheduler pods and user-placeholder pods.
+scheduling:
+  
+  podPriority:
+    enabled: true
+  userScheduler:
+    enabled: true
+    image:
+      # IMPORTANT: Bumping the minor version of this binary should go hand in
+      #            hand with an inspection of the user-scheduelrs RBAC resources
+      #            that we have forked.
+      name: suggest123/kube-scheduler
+      tag: v1.19.13 # ref: https://github.com/kubernetes/website/blob/main/content/en/releases/patch-releases.md
+  userPlaceholder:
+    enabled: true
+    replicas: 2
+    image:
+      name: suggest123/pause
+      # tag's can be updated by inspecting the output of the command:
+      # gcloud container images list-tags k8s.gcr.io/pause --sort-by=~tags
+      #
+      # If you update this, also update prePuller.pause.image.tag
+      tag: "3.5"
+  
+singleuser:
+  defaultUrl: "/lab"
+  extraEnv:
+    LANGUAGE: zh_CN
+  image:
+#    name: jupyter/base-notebook
+#    tag: notebook-6.4.6
+     name: dockerhub.nlecloud.com/ai/ai-base-dind
+     tag: latest
+  cpu:
+    limit: 1
+    guarantee: 1
+  memory:
+    limit: "4096M"
+    guarantee: "4096M"
+  storage:
+    capacity: 30Gi
+    type: dynamic
+    dynamic:
+      storageClass: local-path
+#    extraVolumes:
+#      - name: phfs
+#        persistentVolumeClaim:
+#          claimName: cephfs-pvc-test
+#          readOnly: true
+#    extraVolumeMounts:
+#      - mountPath: /mnt
+#        name: phfs
+
+prePuller:
+  pause:
+    image:
+      name: suggest123/pause
+      # tag's can be updated by inspecting the output of the command:
+      # gcloud container images list-tags k8s.gcr.io/pause --sort-by=~tags
+      #
+      # If you update this, also update scheduling.userPlaceholder.image.tag
+      tag: "3.5"
+      
+      
+proxy:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30002
+      
+      
+hub:
+  extraFiles:
+
+    # Files in /usr/local/etc/jupyterhub/jupyterhub_config.d are
+    # automatically loaded in alphabetical order of the final file
+    # name when JupyterHub starts.
+    my_config:
+      mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/my_jupyterhub_config.py
+      
+  image:
+    name: nlaicpu.azurecr.cn/newland/k8s-hub
+    tag: 1.0.0
+  config:
+    JupyterHub:
+      authenticator_class: 'jwtauthenticator.jwtauthenticator.JSONWebTokenAuthenticator'
+  #db:
+    #type: mysql
+    #url: mysql+pymysql://root:newlandedu@139.217.176.104:31307/user
+    
+cull:
+  enabled: true
+  timeout: 18000
+  every: 300

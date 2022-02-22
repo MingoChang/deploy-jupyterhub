@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-nginx
+  namespace: rook-ceph
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: newland.ceph.mon
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: rook-ceph-mon-a
+          servicePort: 6789

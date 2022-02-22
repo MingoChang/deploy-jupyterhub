@@ -1,0 +1,12 @@
+Metadata-Version: 2.1
+Name: jupyterhub-jwtauthenticator
+Version: 0.2.dev0
+Summary: JSONWebToken Authenticator for JupyterHub
+Home-page: https://github.com/mogthesprog/jwtauthenticator
+Author: mogthesprog
+Author-email: mevanj89@gmail.com
+License: Apache 2.0
+Platform: UNKNOWN
+
+UNKNOWN
+
