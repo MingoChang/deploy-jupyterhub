@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nacos
+  namespace: nledu
+  labels:
+    name: nacos
+spec:
+  selector:
+    matchLabels:
+      name: nacos 
+  template:
+    metadata:
+      name: nacos
+      labels:
+        name: nacos
+    spec:
+      containers:
+      - name: nacos
+        image: imageserver:8080/nledu-cloud/nacos-server:1.3.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: Asia/Shanghai
+        - name: PREFER_HOST_MODE
+          value: hostname
+        - name: MODE
+          value: standalone
+        - name: SPRING_DATASOURCE_PLATFORM
+          value: mysql
+        - name: MYSQL_SERVICE_HOST
+          value: mysql
+        - name: MYSQL_SERVICE_DB_NAME
+          value: nacos
+        - name: MYSQL_SERVICE_PORT
+          value: "3306"
+        - name: MYSQL_SERVICE_USER
+          value: nacos
+        - name: MYSQL_SERVICE_PASSWORD
+          value: nacos
+        ports:
+        - name: nacos
+          containerPort: 8848
+        volumeMounts:
+        - mountPath: /home/nacos/init.d/custom.properties
+          name: config
+      volumes:
+      - name: config
+        hostPath:
+          path: /root/web/base-deployment/nacos/config/custom.properties
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nacos 
+  namespace: nledu
+  labels:
+    name: nacos
+spec:
+  ports:
+    - name: nacos
+      port: 8848
+      nodePort: 30088
+      targetPort: nacos
+  type: NodePort
+  selector:
+    name: nacos

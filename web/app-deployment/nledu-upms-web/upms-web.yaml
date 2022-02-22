@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upms-web
+  namespace: nledu
+  labels:
+    name: upms-web
+spec:
+  selector:
+    matchLabels:
+      name: upms-web 
+  template:
+    metadata:
+      name: upms-web
+      labels:
+        name: upms-web
+    spec:
+      containers:
+      - name: upms-web
+        image: imageserver:8080/nledu-cloud/nledu-cloud-upms-web:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-upms-web
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: web
+          containerPort: 9092
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/dist/config/config.js
+          name: config
+      volumes:
+      - name: config
+        hostPath:
+          path: /root/web/app-deployment/nledu-upms-web/config.js
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upms-web 
+  namespace: nledu
+  labels:
+    name: upms-web
+spec:
+  ports:
+    - name: web
+      port: 9092
+      targetPort: web
+  selector:
+    name: upms-web

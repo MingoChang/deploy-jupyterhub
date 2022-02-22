@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operation-server
+  namespace: nledu
+  labels:
+    name: operation-server
+spec:
+  selector:
+    matchLabels:
+      name: operation-server 
+  template:
+    metadata:
+      name: operation-server
+      labels:
+        name: operation-server
+    spec:
+      containers:
+      - name: operation-server
+        image: imageserver:8080/nledu-cloud/nledu-cloud-operation-server:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-operation-server
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: operation
+          containerPort: 9294
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: operation-server 
+  namespace: nledu
+  labels:
+    name: operation-server
+spec:
+  ports:
+    - name: operation
+      port: 9294
+      targetPort: operation
+  selector:
+    name: operation-server

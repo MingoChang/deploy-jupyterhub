@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sso-web
+  namespace: nledu
+  labels:
+    name: sso-web
+spec:
+  selector:
+    matchLabels:
+      name: sso-web 
+  template:
+    metadata:
+      name: sso-web
+      labels:
+        name: sso-web
+    spec:
+      containers:
+      - name: sso-web
+        image: imageserver:8080/nledu-cloud/nledu-cloud-sso-web:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-sso-web
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: web
+          containerPort: 9091
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/dist/config/config.js
+          name: config
+      volumes:
+      - name: config
+        hostPath:
+          path: /root/web/app-deployment/nledu-sso-web/config.js
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sso-web 
+  namespace: nledu
+  labels:
+    name: sso-web
+spec:
+  ports:
+    - name: web
+      port: 9091
+      nodePort: 30091
+      targetPort: web
+  type: NodePort
+  selector:
+    name: sso-web

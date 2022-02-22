@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: case-center
+  namespace: nledu
+  labels:
+    name: case-center
+spec:
+  selector:
+    matchLabels:
+      name: case-center 
+  template:
+    metadata:
+      name: case-center
+      labels:
+        name: case-center
+    spec:
+      containers:
+      - name: case-center
+        image: imageserver:8080/nledu-cloud/nledu-cloud-case-center-server:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-case-center-server
+        - name: appenv
+          value: privatization
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: case-port
+          containerPort: 9295
+        - name: center-port
+          containerPort: 29295
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: case-center 
+  namespace: nledu
+  labels:
+    name: case-center
+spec:
+  ports:
+    - name: case-port
+      port: 9295
+      targetPort: case-port
+    - name: center-port
+      port: 29295
+      targetPort: center-port
+  selector:
+    name: case-center

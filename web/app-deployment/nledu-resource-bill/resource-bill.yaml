@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-bill
+  namespace: nledu
+  labels:
+    name: resource-bill
+spec:
+  selector:
+    matchLabels:
+      name: resource-bill 
+  template:
+    metadata:
+      name: resource-bill
+      labels:
+        name: resource-bill
+    spec:
+      containers:
+      - name: resource-bill
+        image: imageserver:8080/nledu-cloud/nledu-cloud-resource-bill-server:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-resource-bill-server
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: resource
+          containerPort: 9296
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-bill 
+  namespace: nledu
+  labels:
+    name: resource-bill
+spec:
+  ports:
+    - name: resource
+      port: 9296
+      targetPort: resource 
+  selector:
+    name: resource-bill

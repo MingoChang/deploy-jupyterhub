@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teaching-gateway
+  namespace: nledu
+  labels:
+    name: teaching-gateway
+spec:
+  selector:
+    matchLabels:
+      name: teaching-gateway 
+  template:
+    metadata:
+      name: teaching-gateway
+      labels:
+        name: teaching-gateway
+    spec:
+      containers:
+      - name: teaching-gateway
+        image: imageserver:8080/nledu-cloud/nledu-cloud-teaching-gateway:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-teaching-gateway
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: gateway
+          containerPort: 9191
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teaching-gateway 
+  namespace: nledu
+  labels:
+    name: teaching-gateway
+spec:
+  ports:
+    - name: gateway
+      port: 9191
+      nodePort: 30097
+      targetPort: gateway
+  type: NodePort
+  selector:
+    name: teaching-gateway

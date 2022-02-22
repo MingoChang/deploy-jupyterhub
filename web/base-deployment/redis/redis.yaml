@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: nledu
+  labels:
+    name: redis
+spec:
+  selector:
+    matchLabels:
+      name: redis 
+  template:
+    metadata:
+      name: redis
+      labels:
+        name: redis
+    spec:
+      containers:
+      - name: redis
+        image: imageserver:8080/nledu-cloud/redis-5.0.5:5.0.5
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ            
+          value: Asia/Shanghai
+        ports:
+        - name: redis
+          containerPort: 6379
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /usr/local/etc/redis/redis.conf
+          name: conf
+      volumes:
+      - name: data
+        hostPath:
+          path: /root/web/base-deployment/redis/datadir
+      - name: conf 
+        hostPath:
+          path: /root/web/base-deployment/redis/redis.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis 
+  namespace: nledu
+  labels:
+    name: redis
+spec:
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+  selector:
+    name: redis

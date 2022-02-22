@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teaching-web
+  namespace: nledu
+  labels:
+    name: teaching-web
+spec:
+  selector:
+    matchLabels:
+      name: teaching-web 
+  template:
+    metadata:
+      name: teaching-web
+      labels:
+        name: teaching-web
+    spec:
+      containers:
+      - name: teaching-web
+        image: imageserver:8080/nledu-cloud/nledu-cloud-teaching-web:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-teaching-web
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: web
+          containerPort: 9090
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/dist/config/config.js
+          name: config
+        - mountPath: /app/nledu-teaching-web/log
+          name: log
+      volumes:
+      - name: config
+        hostPath:
+          path: /root/web/app-deployment/nledu-teaching-web/config/config.js
+      - name: log
+        hostPath:
+          path: /root/web/log/nledu-teaching-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teaching-web 
+  namespace: nledu
+  labels:
+    name: teaching-web
+spec:
+  ports:
+    - name: web
+      port: 9090
+      nodePort: 30090
+      targetPort: web
+  type: NodePort
+  selector:
+    name: teaching-web

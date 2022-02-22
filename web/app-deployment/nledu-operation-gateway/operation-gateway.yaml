@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operation-gateway
+  namespace: nledu
+  labels:
+    name: operation-gateway
+spec:
+  selector:
+    matchLabels:
+      name: operation-gateway 
+  template:
+    metadata:
+      name: operation-gateway
+      labels:
+        name: operation-gateway
+    spec:
+      containers:
+      - name: operation-gateway
+        image: imageserver:8080/nledu-cloud/nledu-cloud-operation-gateway:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-operation-gateway
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: operation
+          containerPort: 9192
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: operation-gateway 
+  namespace: nledu
+  labels:
+    name: operation-gateway
+spec:
+  ports:
+    - name: operation
+      port: 9192
+      nodePort: 30095
+      targetPort: operation
+  type: NodePort
+  selector:
+    name: operation-gateway

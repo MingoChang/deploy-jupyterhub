@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sso-gateway
+  namespace: nledu
+  labels:
+    name: sso-gateway
+spec:
+  selector:
+    matchLabels:
+      name: sso-gateway 
+  template:
+    metadata:
+      name: sso-gateway
+      labels:
+        name: sso-gateway
+    spec:
+      containers:
+      - name: sso-gateway
+        image: imageserver:8080/nledu-cloud/nledu-cloud-sso-gateway:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-sso-gateway
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: gateway 
+          containerPort: 9190
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sso-gateway 
+  namespace: nledu
+  labels:
+    name: sso-gateway
+spec:
+  ports:
+    - name: gateway
+      port: 9190
+      nodePort: 30093
+      targetPort: gateway
+  type: NodePort
+  selector:
+    name: sso-gateway

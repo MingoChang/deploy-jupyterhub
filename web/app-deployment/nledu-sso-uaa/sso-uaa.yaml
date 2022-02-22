@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sso-uaa
+  namespace: nledu
+  labels:
+    name: sso-uaa
+spec:
+  selector:
+    matchLabels:
+      name: sso-uaa 
+  template:
+    metadata:
+      name: sso-uaa
+      labels:
+        name: sso-uaa
+    spec:
+      containers:
+      - name: sso-uaa
+        image: imageserver:8080/nledu-cloud/nledu-cloud-sso-uaa:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-sso-uaa
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: uaa
+          containerPort: 9291
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sso-uaa 
+  namespace: nledu
+  labels:
+    name: sso-uaa
+spec:
+  ports:
+    - name: uaa
+      port: 9291
+      nodePort: 30092
+      targetPort: uaa
+  type: NodePort
+  selector:
+    name: sso-uaa

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sso-upms
+  namespace: nledu
+  labels:
+    name: sso-upms
+spec:
+  selector:
+    matchLabels:
+      name: sso-upms 
+  template:
+    metadata:
+      name: sso-upms
+      labels:
+        name: sso-upms
+    spec:
+      containers:
+      - name: sso-upms
+        image: imageserver:8080/nledu-cloud/nledu-cloud-sso-upms-server:0.9.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: appname
+          value: nledu-cloud-sso-upms-server
+        - name: appenv
+          value: develop
+        envFrom:
+        - configMapRef:
+            name: devmap
+        ports:
+        - name: upms
+          containerPort: 9290
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sso-upms 
+  namespace: nledu
+  labels:
+    name: sso-upms
+spec:
+  ports:
+    - name: upms
+      port: 9292
+      targetPort: upms
+  selector:
+    name: sso-upms

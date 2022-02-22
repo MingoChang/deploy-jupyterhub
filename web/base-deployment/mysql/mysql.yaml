@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: nledu
+  labels:
+    name: mysql
+spec:
+  selector:
+    matchLabels:
+      name: mysql 
+  template:
+    metadata:
+      name: mysql
+      labels:
+        name: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: imageserver:8080/nledu-cloud/mysql:5.7.28
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ            
+          value: Asia/Shanghai
+        - name: MYSQL_ROOT_PASSWORD
+          value: newlandedu
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: data
+        - mountPath: /etc/mysql/my.cnf
+          name: cnf
+      volumes:
+      - name: data
+        hostPath:
+          path: /root/web/base-deployment/mysql/datadir
+      - name: cnf 
+        hostPath:
+          path: /root/web/base-deployment/mysql/my.cnf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql 
+  namespace: nledu
+  labels:
+    name: mysql
+spec:
+  ports:
+    - name: mysql
+      port: 3306
+      nodePort: 30096
+      targetPort: mysql
+  type: NodePort
+  selector:
+    name: mysql
